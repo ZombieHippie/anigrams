@@ -10,13 +10,14 @@ body {
   background: gray;
   position: relative;
 }
-#game>canvas {
-  pointer-events: none;
-}
 #game>canvas, .ani-points {
   width: 100%;
   height: 100%;
   position: absolute;
+  z-index: 1;
+}
+#game>canvas {
+  z-index: 0;
 }
 .ani-points>.ani-point {
   padding: 3px;

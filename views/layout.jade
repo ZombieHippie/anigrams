@@ -1,13 +1,15 @@
-head
-  if title
-    title=title
-  meta(http-equiv="Content-Type" content="text/html;charset=utf-8")
-  block head
-body
-  block content
-  footer
-    //-
-      script(src="/vendors/bootstrap-3.1.1/bootstrap.min.js")
-    script(src="//localhost:9999/devreload.js")
-    script(src="/coffee/debug.js")
-    block footer
+doctype html
+html
+  head
+    if title
+      title=title
+    meta(http-equiv="Content-Type" content="text/html;charset=utf-8")
+    block head
+  body
+    block content
+    footer
+      //-
+        script(src="/vendors/bootstrap-3.1.1/bootstrap.min.js")
+      script(src="//localhost:9999/devreload.js")
+      script(src="/coffee/debug.js")
+      block footer
