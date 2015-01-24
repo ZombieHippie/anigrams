@@ -7,7 +7,7 @@ body {
   width: 100vw;
   max-height: 100vw;
   height: 100vh;
-  background: gray;
+  background: #f2f2f2;
   position: relative;
 }
 #game>canvas, .ani-points {

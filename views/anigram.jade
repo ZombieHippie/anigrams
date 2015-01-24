@@ -1,0 +1,23 @@
+extends layout
+
+block head
+  link(href="/css/anigrams.css" rel="stylesheet")
+
+block content
+  #game
+    .ani-points
+    canvas
+  #menu(onclick="this.className = this.className === 'open'? '': 'open'")
+    nav
+      each link in anigrams
+        a(href="/anigram/" + link)=link
+
+block footer
+  script(src="/vendors/jquery-2.1.1/jquery-2.1.1.min.js")
+  script(src="/vendors/interact-1.2.2/interact-1.2.2.min.js")
+  script(src="/coffee/anigrams-points.js")
+  if anigram_info
+    if anigram_info.scripts
+      each script in anigram_info.scripts
+        script(src=script)      
+  script(src="/anigrams/#{anigram}/script.js")
