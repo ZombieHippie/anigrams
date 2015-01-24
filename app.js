@@ -5,7 +5,11 @@ var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser')
 var session = require('express-session')
 
-var simpleRoute = require('./routes/')
+
+var fs = require('fs')
+var path = require('path')
+GLOBAL.anigramPath = path.resolve(__dirname, './static/anigrams')
+GLOBAL.anigrams = fs.readdirSync(anigramPath)
 
 var app = express()
 
@@ -28,7 +32,8 @@ app.use(require('./lib/coffee-middleware')({
 app.use(express.static(path.join(__dirname, 'static')))
 
 /// Routes
-app.use('/', simpleRoute)
+app.use('/anigram', require('./routes/anigram'))
+app.use('/', require('./routes/'))
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
