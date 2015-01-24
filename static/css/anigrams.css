@@ -22,6 +22,7 @@ body {
 .ani-points>.ani-point {
   padding: 3px;
   z-index: 5;
+  position: absolute;
   border: solid 3px #5C90FF;
 }
 .ani-points>.ani-point>div {
