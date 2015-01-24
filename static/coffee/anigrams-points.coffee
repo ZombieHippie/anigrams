@@ -1,3 +1,4 @@
+this.anigramSize = document.getElementById("game").offsetWidth
 
 this.createPoint = (loc_x, loc_y, onmove, slow=false) ->
   newEl = $("<div class='ani-point'><div></div></div>")
