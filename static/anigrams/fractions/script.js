@@ -12,13 +12,16 @@ function draw_sliver(radius, s_angle, f_angle, color)
     d_angle = 1 / pieces * 2;
 
     var i = 2;
-    for (var angle = s_angle; angle < f_angle - 0.01; angle += d_angle) // - 0.01 for floating point error handling
+    if (f_angle != Infinity)
     {
-        var v = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
-        geom.vertices.push(v);
-        face = new THREE.Face3(0, i - 1, i)
-        geom.faces.push(face);
-        i++;
+        for (var angle = s_angle; angle < f_angle - 0.01; angle += d_angle) // - 0.01 for floating point error handling
+        {
+            var v = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
+            geom.vertices.push(v);
+            face = new THREE.Face3(0, i - 1, i)
+            geom.faces.push(face);
+            i++;
+        }
     }
     var v = new THREE.Vector3(Math.cos(f_angle) * radius, Math.sin(f_angle) * radius, 0);
     geom.vertices.push(v);
@@ -51,6 +54,7 @@ circle = function(xpos)
     this.index = 0;
     this.offset = 0;
     this.xpos = xpos;
+    this.objects = [];
 }
 
 circle.prototype.draw_frac = function(numerator, denominator, color)
@@ -62,7 +66,7 @@ circle.prototype.draw_frac = function(numerator, denominator, color)
     this.offset += numerator / denominator;
     sliver.position.x = this.xpos;
     scene.add(sliver);
-    this.object = sliver;
+    this.objects.push(sliver);
 }
 
 colors = [0x3FB8AF, 0x7FC7AF, 0xDAD8A7, 0xFF9E9D, 0xFF3D7F]
@@ -76,7 +80,8 @@ function draw_frac_addition()
     for (var i = 0; i < 3; i++)
     {
         circles[i].offset = 0;
-        scene.remove(circles[i].object);
+        while (circles[i].objects.length != 0)
+            scene.remove(circles[i].objects.pop());
     }
     num_1 = parseInt($("#num_1").val());
     num_2 = parseInt($("#num_2").val());
