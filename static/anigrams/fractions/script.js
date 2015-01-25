@@ -145,7 +145,7 @@ function draw_frac_addition()
 {
     var lcd = mmc([INS.den1.value, INS.den2.value])
     var val = INS.num1.value * INS.den2.value + INS.num2.value * INS.den1.value
-    $("#num3").text(val)
+    $("#num3").text(val / lcd)
     $("#den3").text(lcd)
 
     for (var i = 0; i < 3; i++)
