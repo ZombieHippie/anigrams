@@ -1,5 +1,4 @@
 pi = 3.14159265358979;
-visual_objects = [];
 
 function draw_sliver(radius, s_angle, f_angle, color)
 {
@@ -13,13 +12,16 @@ function draw_sliver(radius, s_angle, f_angle, color)
     d_angle = 1 / pieces * 2;
 
     var i = 2;
-    for (var angle = s_angle; angle < f_angle - 0.01; angle += d_angle) // - 0.01 for floating point error handling
+    if (f_angle != Infinity)
     {
-        var v = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
-        geom.vertices.push(v);
-        face = new THREE.Face3(0, i - 1, i)
-        geom.faces.push(face);
-        i++;
+        for (var angle = s_angle; angle < f_angle - 0.01; angle += d_angle) // - 0.01 for floating point error handling
+        {
+            var v = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
+            geom.vertices.push(v);
+            face = new THREE.Face3(0, i - 1, i)
+            geom.faces.push(face);
+            i++;
+        }
     }
     var v = new THREE.Vector3(Math.cos(f_angle) * radius, Math.sin(f_angle) * radius, 0);
     geom.vertices.push(v);
@@ -29,37 +31,115 @@ function draw_sliver(radius, s_angle, f_angle, color)
 
     var object = new THREE.Mesh( geom, new THREE.MeshBasicMaterial( { color: color } ) );
     object.material.side = THREE.DoubleSide;
-
-    object.position.z = 100;
-    object.rotation.y = 0;
-    scene.add(object);
-    visual_objects.push(object)
+    object.position.z = -800;
+    return object;
 }
 
-function draw_frac(numerator, denominator)
-{
-    color = draw_frac.colors[draw_frac.index % draw_frac.colors.length]
-    draw_frac.index += 1;
-    start = draw_frac.offset * 2 * pi;
-    end = (numerator / denominator + draw_frac.offset) * 2 * pi;
-    draw_sliver(100, start, end, color);
-    draw_frac.offset += numerator / denominator;
-}
-draw_frac.colors = [0x0000ff, 0x00ffff, 0x00ff00, 0xffff00, 0xff0000]
-draw_frac.index = 0;
-draw_frac.offset = 0;
-
-var renderer = new THREE.WebGLRenderer({ antialias : true});
-renderer.setSize(anigramSize, anigramSize);
+var renderer = new THREE.WebGLRenderer({ antialias : true, alpha : true});
+renderer.setSize(anigramSize, anigramSize / 2);
 $("#game>canvas").remove()
 $("#game").prepend(renderer.domElement);
 
-var camera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
+$('#game').prepend
+(
+'<div class="abs" style="z-index:2;">\
+  <div class="c25">\
+    <div id="num1" class="num">5</div>\
+    <input id="num1range" type="range" max="9" min="0" data-target="num1">\
+    <div class="nddiv"></div>\
+    <div id="den1" class="num">5</div>\
+    <input id="den1range" type="range" max="9" min="1" data-target="den1">\
+  </div>\
+  <div style="left: 25%" class="c125">\
+    <div id="operator" class="sym">+</div>\
+  </div>\
+  <div style="left: 37.5%" class="c25">\
+    <div id="num2" class="num">5</div>\
+    <input id="num2range" type="range" max="9" min="0" data-target="num2">\
+    <div class="nddiv"></div>\
+    <div id="den2" class="num">5</div>\
+    <input id="den2range" type="range" max="9" min="1" data-target="den2">\
+  </div>\
+  <div style="left: 62.5%" class="c125">\
+    <div class="sym">=</div>\
+  </div>\
+  <div style="left: 75%" class="c25">\
+    <div id="num2" class="num">5</div><span class="sep">&nbsp;</span>\
+    <div class="nddiv"></div>\
+    <div id="den2" class="num">5</div><span class="sep">&nbsp;</span>\
+  </div>\
+</div>\
+\
+<style>\
+    body {margin:0}\
+    .abs, .abs>div { position: absolute; }\
+    .abs > div {height:100%}\
+    .abs {width:100%;height:50vh}\
+    .c25 { width: 25%; background: #aaffff; text-align: center; }\
+    .c25>.num {font-size:15vh}\
+    .c25>.nddiv {border-bottom: 3vh solid black;}\
+    .c125 { width: 12.5%; background: #ccaaff; text-align: center }\
+    .sym { padding: 15vh 5%; font-size: 10vw; position: inline }\
+    .sep { height: 2em }\
+</style>\
+')
+
+$("input[data-target]").on("input", function (event) {
+  var targetId = event.target.dataset.target;
+  document.getElementById(targetId).innerText = event.target.value
+})
+
+var camera = new THREE.PerspectiveCamera(45, 2, 1, 1500);
 camera.position.z = 700;
 
 var scene = new THREE.Scene();
 
-draw_frac(1, 4);
-draw_frac(1, 4);
+circle = function(xpos)
+{
+    this.index = 0;
+    this.offset = 0;
+    this.xpos = xpos;
+    this.objects = [];
+}
+
+circle.prototype.draw_frac = function(numerator, denominator, color)
+{
+    this.index += 1;
+    start = this.offset * 2 * pi;
+    end = (numerator / denominator + this.offset) * 2 * pi;
+    sliver = draw_sliver(100, start, end, color);
+    this.offset += numerator / denominator;
+    sliver.position.x = this.xpos;
+    scene.add(sliver);
+    this.objects.push(sliver);
+}
+
+colors = [0x3FB8AF, 0x7FC7AF, 0xDAD8A7, 0xFF9E9D, 0xFF3D7F]
+circles = [];
+circles.push(new circle(-500));
+circles.push(new circle(-100));
+circles.push(new circle(400));
+
+function draw_frac_addition()
+{
+    for (var i = 0; i < 3; i++)
+    {
+        circles[i].offset = 0;
+        while (circles[i].objects.length != 0)
+            scene.remove(circles[i].objects.pop());
+    }
+    num_1 = parseInt($("#num1range").val());
+    num_2 = parseInt($("#num2range").val());
+    den_1 = parseInt($("#den1range").val());
+    den_2 = parseInt($("#den2range").val());
+    circles[0].draw_frac(num_1, den_1, colors[0]);
+    circles[1].draw_frac(num_2, den_2, colors[3]);
+    circles[2].draw_frac(circles[0].offset, 1, colors[0]);
+    circles[2].draw_frac(circles[1].offset, 1, colors[3]);
+    renderer.render(scene, camera);
+}
+
+draw_frac_addition()
 renderer.render(scene, camera);
+$("input").on('input', draw_frac_addition);
 
