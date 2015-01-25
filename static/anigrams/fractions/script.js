@@ -14,9 +14,10 @@ function draw_sliver(radius, s_angle, f_angle, color)
     var i = 2;
     if (f_angle != Infinity)
     {
+        var v;
         for (var angle = s_angle; angle < f_angle - 0.01; angle += d_angle) // - 0.01 for floating point error handling
         {
-            var v = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
+            v = new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
             geom.vertices.push(v);
             face = new THREE.Face3(0, i - 1, i)
             geom.faces.push(face);
@@ -64,17 +65,16 @@ $('#game').prepend
     <div class="sym">=</div>\
   </div>\
   <div style="left: 75%" class="c25">\
-    <div id="num2" class="num">5</div><span class="sep">&nbsp;</span>\
+    <div id="num3" class="num">5</div><span class="sep">&nbsp;</span>\
     <div class="nddiv"></div>\
-    <div id="den2" class="num">5</div><span class="sep">&nbsp;</span>\
+    <div id="den3" class="num">5</div><span class="sep">&nbsp;</span>\
   </div>\
 </div>\
 \
 <style>\
-    body {margin:0}\
     .abs, .abs>div { position: absolute; }\
     .abs > div {height:100%}\
-    .abs {width:100%;height:50vh}\
+    .abs {width:100%;height:50%;top:50%}\
     .c25 { width: 25%; background: #aaffff; text-align: center; }\
     .c25>.num {font-size:15vh}\
     .c25>.nddiv {border-bottom: 3vh solid black;}\
@@ -87,6 +87,7 @@ $('#game').prepend
 $("input[data-target]").on("input", function (event) {
   var targetId = event.target.dataset.target;
   document.getElementById(targetId).innerText = event.target.value
+  draw_frac_addition()
 })
 
 var camera = new THREE.PerspectiveCamera(45, 2, 1, 1500);
@@ -120,8 +121,33 @@ circles.push(new circle(-500));
 circles.push(new circle(-100));
 circles.push(new circle(400));
 
+var mmc = function(o){
+    for(var i, j, n, d, r = 1; (n = o.pop()) != undefined;)
+        while(n > 1){
+            if(n % 2){
+                for (i = 3, j = Math.floor(Math.sqrt(n)); i <= j && n % i; i += 2);
+                d = i <= j ? i : n;
+            }
+            else
+                d = 2;
+            for(n /= d, r *= d, i = o.length; i; !(o[--i] % d) && (o[i] /= d) == 1 && o.splice(i, 1));
+        }
+    return r;
+};
+
+var INS = {
+    num1: $("#num1range")[0],
+    den1: $("#den1range")[0],
+    num2: $("#num2range")[0],
+    den2: $("#den2range")[0]
+}
 function draw_frac_addition()
 {
+    var lcd = mmc([INS.den1.value, INS.den2.value])
+    var val = (INS.num1.value / INS.den1.value + INS.num2.value / INS.den2.value) * lcd 
+    $("#num3").text(val)
+    $("#den3").text(lcd)
+
     for (var i = 0; i < 3; i++)
     {
         circles[i].offset = 0;
@@ -141,5 +167,3 @@ function draw_frac_addition()
 
 draw_frac_addition()
 renderer.render(scene, camera);
-$("input").on('input', draw_frac_addition);
-
