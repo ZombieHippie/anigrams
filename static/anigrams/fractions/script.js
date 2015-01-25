@@ -91,7 +91,7 @@ $("input[data-target]").on("input", function (event) {
 })
 
 var camera = new THREE.PerspectiveCamera(45, 2, 1, 1500);
-camera.position.z = 700;
+camera.position.z = 00;
 
 var scene = new THREE.Scene();
 
@@ -118,8 +118,8 @@ circle.prototype.draw_frac = function(numerator, denominator, color)
 colors = [0x3FB8AF, 0x7FC7AF, 0xDAD8A7, 0xFF9E9D, 0xFF3D7F]
 circles = [];
 circles.push(new circle(-500));
-circles.push(new circle(-100));
-circles.push(new circle(400));
+circles.push(new circle(00));
+circles.push(new circle(500));
 
 var mmc = function(o){
     for(var i, j, n, d, r = 1; (n = o.pop()) != undefined;)
@@ -144,7 +144,7 @@ var INS = {
 function draw_frac_addition()
 {
     var lcd = mmc([INS.den1.value, INS.den2.value])
-    var val = (INS.num1.value / INS.den1.value + INS.num2.value / INS.den2.value) * lcd 
+    var val = INS.num1.value * INS.den2.value + INS.num2.value * INS.den1.value
     $("#num3").text(val)
     $("#den3").text(lcd)
 
