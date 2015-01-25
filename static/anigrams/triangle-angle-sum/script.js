@@ -8,4 +8,6 @@ var new_change = function (x, y, point_no) {
   })
 }
 
-new_change(.5, .5 ,0)
+new_change(.5, .1 ,0)
+new_change(.9, .9 ,0)
+new_change(.1, .5 ,0)
