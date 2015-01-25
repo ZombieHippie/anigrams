@@ -127,11 +127,30 @@ var INS = {
     num2: $("#num2range")[0],
     den2: $("#den2range")[0]
 }
+
+
+function gcd(a, b)
+{
+    if (a == 0 || b == 0) return 1;
+
+    var a, b;
+    while (true)
+    {
+        if (a == b){ return a; }
+        else if (a > b){ a = a - b }
+        else { b = b - a }
+    }
+}
+
 function draw_frac_addition()
 {
-    var val = INS.num1.value * INS.den2.value + INS.num2.value * INS.den1.value
-    $("#num3").text(val)
-    $("#den3").text(INS.den2.value * INS.den1.value)
+    var num = INS.num1.value * INS.den2.value + INS.num2.value * INS.den1.value
+    var den = INS.den2.value * INS.den1.value
+    var greatest_common_divisor = gcd(num, den)
+    num = num / greatest_common_divisor
+    den = den / greatest_common_divisor
+    $("#num3").text(num)
+    $("#den3").text(den)
 
     for (var i = 0; i < 3; i++)
     {
@@ -149,6 +168,7 @@ function draw_frac_addition()
     circles[2].draw_frac(circles[1].offset, 1, colors[3]);
     renderer.render(scene, camera);
 }
+
 
 draw_frac_addition()
 renderer.render(scene, camera);
