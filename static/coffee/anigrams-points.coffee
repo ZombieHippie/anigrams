@@ -1,7 +1,11 @@
+this.anigramSize = document.getElementById("game").offsetWidth
 
 this.createPoint = (loc_x, loc_y, onmove, slow=false) ->
   newEl = $("<div class='ani-point'><div></div></div>")
   newEl.appendTo(".ani-points")
+  width = newEl.width()
+  loc_x -= width / 2
+  loc_y -= width / 2
   target = newEl[0]
   target.style.webkitTransform =
   target.style.transform =
